@@ -1,0 +1,1 @@
+web: java -jar target/SupremeCashV2AuthServer-0.1.jar
