@@ -47,7 +47,8 @@ public class Connection implements Runnable {
 				}
 				else {
 					System.out.println("applying operator");
-					this.out.write(operation.apply(StringUtils.split(input, ","))); 
+					this.out.write(operation.apply(StringUtils.split(input, ",")));
+					this.out.flush();
 				}
 			}
 			this.clientSocket.close();

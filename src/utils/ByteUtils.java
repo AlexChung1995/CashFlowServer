@@ -26,4 +26,17 @@ public class ByteUtils {
 		return bytes;
 	}
 	
+	public static byte[] toByteArray(boolean bool) {
+		if (bool) {
+			return toByteArray("true");
+		}
+		else {
+			return toByteArray("false");
+		}
+	}
+	
+	public static char[] fromByteArray(byte [] bytes) {
+		return new char[10];
+	}
+	
 }

@@ -1,13 +1,16 @@
 package server;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import Supreme.Authorize;
 import Supreme.Generate;
 import server.Route;
+import utils.ByteUtils;
 //server class for listening and handling requests
 public class Server implements Runnable {
 
@@ -46,17 +49,30 @@ public class Server implements Runnable {
 	
 	public static void main(String[] args) {
 		try {
-			Route sum = new Route(new HashMap<String,Route>(), 
+			Route generate = new Route(new HashMap<String,Route>(), 
 					(params) -> {
-						return Generate.generateRandomKey(new byte[10]);
+						try {
+							return Generate.generateRandomKey(new byte[10]);
+						}
+						catch(IOException e) {
+							return ByteUtils.toByteArray("400 " + e.getLocalizedMessage());
+						}
 					}
 					, 
 					null
-					, 
+					,
 					null 
 			);
+			Route authorize = new Route(new HashMap<String,Route>(),
+					(params) -> {
+						return ByteUtils.toByteArray(Authorize.authorize(ByteUtils.toByteArray(params[0])));
+					},
+					null,
+					null
+			);
 			HashMap<String,Route> routes = new HashMap<String,Route>();
-			routes.put("generate", sum);
+			routes.put("generate", generate);
+			routes.put("authorize", authorize);
 			Route base = new Route(routes,
 					null,
 					null,

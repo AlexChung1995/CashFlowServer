@@ -5,6 +5,8 @@ import java.util.Properties;
 
 public class Driving {
 	
+	private Connection db;
+	
 	public Driving() {
 		
 	}
@@ -13,8 +15,12 @@ public class Driving {
 		Properties props = new Properties();
 		props.setProperty("user",user);
 		props.setProperty("password", password);
-		Connection db = DriverManager.getConnection(url,props);
+		this.db = DriverManager.getConnection(url,props);
 		return db;
+	}
+	
+	public Connection getDB() {
+		return this.db;
 	}
 	
 }

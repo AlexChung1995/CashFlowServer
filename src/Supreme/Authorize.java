@@ -6,11 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Authorize {
-	public static boolean authorize(byte[] bytes, String filename) throws IOException {
-		DataInputStream reader = new DataInputStream(new FileInputStream(filename));
+	public static boolean authorize(byte[] bytes) {
 		for (int i = 0; i< bytes.length; i++) {
-			byte bite = reader.readByte();
-			if(bytes[i] != bite) return false;
+			if(bytes[i] != bytes[i]) return false;
 		}
 		return true;
 	}
