@@ -8,16 +8,27 @@ public class Route {
 	private HashMap<String,Route> router;
 	private HashMap<String,Function<String [],String>> functions; 
 	
-	public Route(HashMap<String,Route> routes, Function<String[], String> get, Function <String[], String> put, Function <String[], String> post) throws Exception{
-		if (get == null || put == null || post == null) {
-			throw new IllegalArgumentException("Must provide a lambda expression for get, post and put"); 
-		}
+	public Route(HashMap<String,Route> routes, Function<String[], String> get, Function <String[], String> put, Function <String[], String> post){
 		this.router = routes;
 		this.router.put("", this);//loopback
+		Function<String[], String> defaultFunc = (params) -> { return "404 Not Found"; };
 		this.functions = new HashMap<String,Function<String[],String>>();
-		this.functions.put("GET", get);
-		this.functions.put("PUT", put);
-		this.functions.put("POST", post);
+		if (get == null) {
+			this.functions.put("GET", defaultFunc);
+		}else {
+			this.functions.put("GET", get);
+		}
+		if(put == null) {
+			this.functions.put("PUT", defaultFunc);
+		}else {
+			this.functions.put("PUT", put);
+		}
+		if(post == null) {
+			this.functions.put("POST", defaultFunc);
+		}
+		else {
+			this.functions.put("POST", post);
+		}
 	}
 	
 	public Function<String[],String> route(String [] path, int pathPlace, String request) {

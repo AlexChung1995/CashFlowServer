@@ -54,17 +54,17 @@ public class Server implements Runnable {
 						return Integer.toString(sums);
 					}
 					, 
-					(params) -> {return "404 Not Found";}
+					null
 					, 
-					(params) -> {return "404 Not Found";} 
+					null 
 			
 			);
 			HashMap<String,Route> routes = new HashMap<String,Route>();
 			routes.put("sum", sum);
 			Route base = new Route(routes,
-					(params) -> "Hello World!",
-					(params) -> "Hello World!",
-					(params) -> "Hello World!"
+					null,
+					null,
+					null
 			);
 			Server server = new Server(Integer.parseInt(System.getenv("PORT")),Integer.parseInt(System.getenv("THREAD_NUMBER")),base);
 			System.out.println(System.getenv("PORT") + " " + System.getenv("THREAD_NUMBER"));
