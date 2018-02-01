@@ -1,6 +1,7 @@
 package server;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -14,13 +15,13 @@ import utils.StringUtils;
 public class Connection implements Runnable {
 
 	private Socket clientSocket;
-	private PrintWriter out;
+	private DataOutputStream out;
 	private BufferedReader in;
 	private Route routes;
 	
 	public Connection(Socket clientSocket, Route routes) throws Exception {
 		this.clientSocket = clientSocket;
-		this.out = new PrintWriter(clientSocket.getOutputStream(),true);
+		this.out = new DataOutputStream(clientSocket.getOutputStream());
 		this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		this.routes = routes;
 	}
@@ -46,7 +47,7 @@ public class Connection implements Runnable {
 				}
 				else {
 					System.out.println("applying operator");
-					this.out.println(operation.apply(StringUtils.split(input, ","))); 
+					this.out.write(operation.apply(StringUtils.split(input, ","))); 
 				}
 			}
 			this.clientSocket.close();
