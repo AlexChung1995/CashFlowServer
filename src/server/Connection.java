@@ -31,7 +31,7 @@ public class Connection implements Runnable {
 	public void run() {
 		try {
 			String input;
-			Function<String[],String> operation = null;
+			Function<String[],byte[]> operation = null;
 			while ((input = this.in.readLine()) != null) {
 				System.out.println(input);
 				if (input.equals(">")) {

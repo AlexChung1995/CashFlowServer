@@ -17,5 +17,4 @@ public class Driving {
 		return db;
 	}
 	
-	
 }

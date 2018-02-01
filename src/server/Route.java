@@ -3,16 +3,18 @@ package server;
 import java.util.HashMap;
 import java.util.function.Function;
 
+import utils.ByteUtils;
+
 public class Route {
 	
 	private HashMap<String,Route> router;
-	private HashMap<String,Function<String [],String>> functions; 
+	private HashMap<String,Function<String [],byte[]>> functions; 
 	
-	public Route(HashMap<String,Route> routes, Function<String[], String> get, Function <String[], String> put, Function <String[], String> post){
+	public Route(HashMap<String,Route> routes, Function<String[], byte[]> get, Function <String[], byte[]> put, Function <String[], byte[]> post){
 		this.router = routes;
 		this.router.put("", this);//loopback
-		Function<String[], String> defaultFunc = (params) -> { return "404 Not Found"; };
-		this.functions = new HashMap<String,Function<String[],String>>();
+		Function<String[], byte[]> defaultFunc = (params) -> { return ByteUtils.toByteArray("404 Not Found"); };
+		this.functions = new HashMap<String,Function<String[],byte[]>>();
 		if (get == null) {
 			this.functions.put("GET", defaultFunc);
 		}else {
@@ -31,7 +33,7 @@ public class Route {
 		}
 	}
 	
-	public Function<String[],String> route(String [] path, int pathPlace, String request) {
+	public Function<String[],byte[]> route(String [] path, int pathPlace, String request) {
 		if (pathPlace == path.length) {
 			return this.functions.get(request);
 		}

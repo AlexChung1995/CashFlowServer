@@ -9,13 +9,11 @@ import utils.ByteUtils;
 public class Generate {
 	
 	public static byte[] generateRandomKey(byte []seed) {
-		int[] key = new int[seed.length/(Integer.SIZE/Byte.SIZE)];
+		byte[] key = new byte[seed.length];//(Integer.SIZE/Byte.SIZE)];
 		System.out.println("key length: " + key.length);
 		SecureRandom random = new SecureRandom(seed);
-		for (int i = 0; i<key.length; i++) {
-			key[i] = random.nextInt(); 
-		}
-		return ByteUtils.toByteArray(key);
+		random.nextBytes(key); 
+		return key;
 	}
 	
 	public static void main(String [] args) throws Exception{
@@ -29,7 +27,6 @@ public class Generate {
 				write.writeByte(key[i]); 
 		}
 		System.out.println(Authorize.authorize(key, "key"));
-		
 	}
 	
 }

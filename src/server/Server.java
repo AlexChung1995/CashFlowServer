@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import Supreme.Generate;
 import server.Route;
 //server class for listening and handling requests
 public class Server implements Runnable {
@@ -47,20 +48,15 @@ public class Server implements Runnable {
 		try {
 			Route sum = new Route(new HashMap<String,Route>(), 
 					(params) -> {
-						int sums = 0;
-						for (int i = 0; i<params.length; i++) {
-							sums += Integer.parseInt(params[i]);
-						}
-						return Integer.toString(sums);
+						return Generate.generateRandomKey(new byte[10]);
 					}
 					, 
 					null
 					, 
 					null 
-			
 			);
 			HashMap<String,Route> routes = new HashMap<String,Route>();
-			routes.put("sum", sum);
+			routes.put("/generate", sum);
 			Route base = new Route(routes,
 					null,
 					null,
