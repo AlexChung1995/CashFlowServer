@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.function.Function;
@@ -48,13 +47,16 @@ public class Connection implements Runnable {
 				else {
 					System.out.println("applying operator");
 					this.out.write(operation.apply(StringUtils.split(input, ",")));
-					this.out.flush();
 				}
 			}
 			this.clientSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+	}
+	
+	private void initConnection() {
 		
 	}
 
