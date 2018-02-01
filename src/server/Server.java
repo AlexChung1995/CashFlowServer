@@ -56,7 +56,7 @@ public class Server implements Runnable {
 					null 
 			);
 			HashMap<String,Route> routes = new HashMap<String,Route>();
-			routes.put("/generate", sum);
+			routes.put("generate", sum);
 			Route base = new Route(routes,
 					null,
 					null,
