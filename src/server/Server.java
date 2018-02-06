@@ -126,6 +126,7 @@ public class Server implements Runnable {
 	public static void main(String[] args) {
 		try {
 			Server server = new Server(Integer.parseInt(System.getenv("PORT")),Integer.parseInt(System.getenv("THREAD_NUMBER")));
+			server.initServer();
 			server.run();
 		} catch (Exception e) {
 			e.printStackTrace();
