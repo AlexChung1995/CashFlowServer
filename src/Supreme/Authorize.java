@@ -12,4 +12,13 @@ public class Authorize {
 		}
 		return true;
 	}
+	public static boolean verifyKey(byte[] bytes) {
+		return true;
+	}
+	public static boolean verifyString(String string) {
+		return true;
+	}
+	public static boolean verifyInt(int x) {
+		return true;
+	}
 }
