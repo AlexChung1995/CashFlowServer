@@ -14,13 +14,13 @@ public class Driving {
 	private HashMap<String,PreparedStatement> queries;//saved precompiled queries
 	
 	
-	public Driving(HashMap<String,Table> tables, HashMap<String,PreparedStatement> queries, String url, String user, String password) throws SQLException {
+	public Driving(HashMap<String,Table> tables, HashMap<String,PreparedStatement> queries, String url, String user, String password) throws SQLException, ClassNotFoundException {
 		this.db = this.connect(url, user, password);
 		this.tables = tables;
 		this.queries = queries;
 	}
 	
-	public Driving(String url, String user, String password) throws SQLException {
+	public Driving(String url, String user, String password) throws SQLException, ClassNotFoundException {
 		this.db = this.connect(url, user, password);
 		
 		PreparedStatement statement = this.db.prepareStatement("SELECT * FROM ?;");
@@ -36,11 +36,12 @@ public class Driving {
 		}
 	}
 	
-	public Connection connect(String url, String user, String password) throws SQLException {
+	public Connection connect(String url, String user, String password) throws SQLException, ClassNotFoundException {
 		Properties props = new Properties();
 		String jdbcUrl = "jdbc:"+url;
 		props.setProperty("user",user);
 		props.setProperty("password", password);
+		Class.forName("org.postgresql.Driver");
 		this.db = DriverManager.getConnection(jdbcUrl,props);
 		return db;
 	}

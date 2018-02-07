@@ -7,6 +7,10 @@ import utils.ByteUtils;
 
 public class Generate {
 	
+	private enum Status {
+		authorized,available,unauthorized 
+	}
+	
 	public static byte[] generateRandomKey(byte []seed) throws IOException {
 		byte[] key = new byte[seed.length];//(Integer.SIZE/Byte.SIZE)];
 		SecureRandom random = new SecureRandom(seed);
@@ -14,7 +18,7 @@ public class Generate {
 		return key;
 	}
 	
-	public static void saveRandomKey(byte[] key) {
+	public static void saveRandomKey(byte[] key, Status status, int number_of_processors, String user_profile, String processor_identifier, String os, String computer_name, String processor_architecture, String java_home, String username) {
 		
 	}
 	

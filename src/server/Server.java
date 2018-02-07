@@ -61,7 +61,7 @@ public class Server implements Runnable {
 		this.base = base;
 	}
 	
-	public Driving initDB(String url, String user, String password) throws SQLException {
+	public Driving initDB(String url, String user, String password) throws SQLException, ClassNotFoundException {
 		Driving driver = new Driving(url,user,password);
 		this.db = driver;
 		return driver;
