@@ -69,7 +69,7 @@ public class Server implements Runnable {
 	
 	public void initServer() {
 		try {
-			initDB(System.getenv("DATABASE_URL"), "postgres", "346578a@A");
+			initDB(System.getenv("JDBC_DATABASE_URL"), "postgres", "346578a@A");
 			Route retrieve = new Route(new HashMap<String,Route>(),
 					(params) -> {
 						try {
