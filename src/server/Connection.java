@@ -1,13 +1,18 @@
 package server;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
 
+import Communications.Request;
+import protocols.ProtocolParser;
+import utils.ByteUtils;
 import utils.StringUtils;
 
 //class for handling connections, threaded
@@ -15,50 +20,46 @@ public class Connection implements Runnable {
 
 	private Socket clientSocket;
 	private DataOutputStream out;
-	private BufferedReader in;
+	private DataInputStream in;
 	private Route routes;
+	private ProtocolParser parser;
+	private boolean keepAlive;
 	
-	public Connection(Socket clientSocket, Route routes) throws Exception {
+	public Connection(Socket clientSocket, Route routes, ProtocolParser parser) throws Exception {
 		this.clientSocket = clientSocket;
 		this.out = new DataOutputStream(clientSocket.getOutputStream());
-		this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		this.in = new DataInputStream(clientSocket.getInputStream());
 		this.routes = routes;
+		this.parser = parser;
+		this.keepAlive = false;
 	}
 	
-	//find route with initial line
-	//use remaining lines as input to route function
+	//parse input to find route
+	//parse body for route input
 	@Override
 	public void run() {
-		try {
-			String input;
-			Function<String[],byte[]> operation = null;
-			while ((input = this.in.readLine()) != null) {
-				System.out.println(input);
-				if (input.equals(">")) {
-					System.out.println("reading new request");
-					String request = this.in.readLine();
-					String[] paths = StringUtils.split(StringUtils.strip(this.in.readLine(),"/"),"/");
-					operation = this.routes.route(paths, 0, request);
-				}
-				else if (input.equals("<")) {
-					System.out.println("ending request");
-					break;
-				}
-				else {
-					System.out.println("applying operator");
-					this.out.write(operation.apply(StringUtils.split(input, ",")));
-					this.out.flush();
-				}
+		int read = 0;
+		while (read >= 0) {
+			try {
+				Request request = this.parser.parse(in);
+				Function<Request,byte[]> operation = this.routes.route(request.getPath(),0,request.getMethodString());
+				byte [] response = operation.apply(request);
+				out.write(response);
 			}
+			catch (IOException e) {
+				e.printStackTrace();
+				break;
+			}
+		}
+		System.out.println("closing connection");
+		try {
 			this.clientSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
-	private void initConnection() {
+	private void sendResponse(Request request, byte[] response){
 		
 	}
-
 }

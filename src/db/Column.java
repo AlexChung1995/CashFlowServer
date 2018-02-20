@@ -1,35 +1,30 @@
 package db;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Types;
 
 public class Column {
-	private int type;
-	private String name;
-	private String table;
-	public Column(int type, String name, String table) {
+	
+	protected Types type;
+	protected String name;
+	protected int position;
+	
+	public Column(Types type, String name) { 
 		this.type = type;
 		this.name = name;
-		this.table = table;
 	}
-	public int getType() {
-		return this.type;
+	
+	public void setValue(int position, PreparedStatement statement, int value) throws SQLException {
+		statement.setInt(position, value);
 	}
-	public String getColName() {
-		return this.name;
+	
+	public void setValue(int position, PreparedStatement statement, String value) throws SQLException {
+		statement.setString(position, value);
 	}
-	public String getTableName() {
-		return this.table;
+	
+	public void setValue(int position, PreparedStatement statement, float value) throws SQLException {
+		statement.setFloat(position, value);
 	}
-	public String getFullColName() {
-		return this.table+"."+this.name;
-	}
-	public void setType(int type) {
-		this.type = type;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public void setDB(String table) {
-		this.table = table;
-	}
+	
 }

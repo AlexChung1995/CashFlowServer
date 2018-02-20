@@ -1,5 +1,6 @@
 package server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,11 +12,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.postgresql.*;
 
-import Supreme.Authorize;
-import Supreme.Generate;
+import Supreme.SupremeDriving;
 import db.Driving;
+import protocols.HTTP;
 import server.Route;
 import utils.ByteUtils;
+import utils.StringUtils;
 //server class for listening and handling requests
 public class Server implements Runnable {
 
@@ -38,7 +40,7 @@ public class Server implements Runnable {
 			try {
 				System.out.println("accepting new connection");
 				Socket clientSocket = this.serverSocket.accept();
-				Connection connection = new Connection(clientSocket,this.base);
+				Connection connection = new Connection(clientSocket,this.base, new HTTP("HTTP"));
 				this.fixedThreadPool.execute(connection);
 			}
 			catch (Exception e) {
@@ -70,37 +72,40 @@ public class Server implements Runnable {
 	
 	public void initServer() {
 		try {
-			initDB(System.getenv("DATABASE_URL"), "postgres", "346578a@A");
+			SupremeDriving supreme = new SupremeDriving(System.getenv("DATABASE_URL"), "postgres", "346578a@A");
+			this.db = supreme;
 			Route retrieve = new Route(new HashMap<String,Route>(),
-					(params) -> {
+					(request) -> {
+						byte [] bytes = new byte[1024];
 						try {
-							ResultSet rs = this.db.getDB().createStatement().executeQuery("SELECT * FROM SupremeCash;");
+							ResultSet rs = this.db.getDB().createStatement().executeQuery("SELECT * FROM authentication;");
 							while (rs.next()) {
-								System.out.println(rs.getString(1));
+								System.out.println(rs.getBytes(1));
 							}
-							return ByteUtils.toByteArray("");
+							return rs.getBytes(1);
 						} catch (Exception e) {
-							return ByteUtils.toByteArray("400"  + e.getLocalizedMessage());
+							return ByteUtils.toByteArray("400"  + e.getLocalizedMessage(),request.getByteNum());
 						}
 					},
 					null,
 					null
 			);
 			Route generate = new Route(new HashMap<String,Route>(), 
-					(params) -> {
+					(request) -> {
 						try {
-							byte[] bytes = Generate.generateRandomKey(new byte[10]);
+							byte[] bytes = supreme.getAuthentication().generateRandomKey(new byte[20]);
+							supreme.getAuthentication().add(StringUtils.stringify(bytes, 2));
 							return bytes;
 						} catch(Exception e) {
-							return ByteUtils.toByteArray("400 " + e.getLocalizedMessage());
+							return ByteUtils.toByteArray("400 " + e.getLocalizedMessage(), request.getByteNum());
 						}
 					}, 
 					null,
 					null 
 			);
 			Route authorize = new Route(new HashMap<String,Route>(),
-					(params) -> {
-						return ByteUtils.toByteArray(Authorize.authorize(ByteUtils.toByteArray(params[0])));
+					(request) -> {
+						return ByteUtils.toByteArray(false, request.getByteNum());//ByteUtils.toByteArray(supreme.getAuthentication().validate(key, status, number_of_processors, user_profile, processor_identifier, os, computer_name, processor_architecture, java_home, username));
 					},
 					null,
 					null

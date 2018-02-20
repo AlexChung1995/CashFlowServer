@@ -3,12 +3,14 @@ package utils;
 import java.util.ArrayList;
 
 public class StringUtils {
-	public static String[] split(String string, String delimit) {
+	
+	public static String[] split(String string, String delimit, int numMatches) {
 		int size = 0;
+		int numFound = 0;
 		ArrayList<String> strings = new ArrayList<String>();
 		String current = "";
 		for (int i = 0; i<string.length(); i++) {	
-			if (string.charAt(i) == delimit.charAt(0)) {
+			if (string.charAt(i) == delimit.charAt(0) && numFound < numMatches) {
 				String possible = "" + string.charAt(i);
 				boolean isDelimiter = true;
 				for (int j = 1; j<delimit.length();j++) {
@@ -17,10 +19,11 @@ public class StringUtils {
 						current += possible;
 						i += j;
 						isDelimiter = false;
-						continue;
+						break;
 					}
 				}
 				if (isDelimiter) {
+					numFound ++;
 					strings.add(current);
 					current = "";
 				}
@@ -31,6 +34,10 @@ public class StringUtils {
 		}
 		strings.add(current);
 		return strings.toArray(new String[size]); 
+	}
+	
+	public static String[] split(String string, String delimit) {
+		return split(string,delimit,(int)Float.POSITIVE_INFINITY);
 	}
 	public static String strip(String string, String delimit) {
 		int current = 0;
@@ -66,6 +73,23 @@ public class StringUtils {
 			}
 		}
 		return string.substring(i, j + 1); 
+	}
+	
+	public static String stringify(byte[] bytes, int byteNum) {
+		String toReturn = "";
+		int i = 0;
+		while (i<bytes.length) {
+			char a = (char)bytes[i];
+			int j = 1;
+			while (j < byteNum) {
+				i++;
+				a = (char) (a << 8);
+				a = (char) (a | bytes[i]);
+			}
+			i++;
+			toReturn += a;
+		}
+		return toReturn;
 	}
 	
 	public static void main(String [] args) {

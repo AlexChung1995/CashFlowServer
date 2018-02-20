@@ -3,18 +3,27 @@ package server;
 import java.util.HashMap;
 import java.util.function.Function;
 
+import Communications.Request;
 import utils.ByteUtils;
 
 public class Route {
 	
-	private HashMap<String,Route> router;
-	private HashMap<String,Function<String [],byte[]>> functions; 
+	public static enum REST{
+		GET,POST,PUT
+	}
 	
-	public Route(HashMap<String,Route> routes, Function<String[], byte[]> get, Function <String[], byte[]> put, Function <String[], byte[]> post){
+	private HashMap<String,Route> router;
+	private HashMap<String,Function<Request,byte[]>> functions; 
+	
+	public Route(HashMap<String,Route> routes, Function<Request, byte[]> get, Function <Request, byte[]> put, Function <Request, byte[]> post){
 		this.router = routes;
 		this.router.put("", this);//loopback
-		Function<String[], byte[]> defaultFunc = (params) -> { return ByteUtils.toByteArray("404 Not Found"); };
-		this.functions = new HashMap<String,Function<String[],byte[]>>();
+		Function<Request, byte[]> defaultFunc = (request) -> {
+			byte[] bytes = ByteUtils.toByteArray("404 Not Found", request.getByteNum()); 
+			System.out.println(new String(bytes));
+			return bytes;
+		};
+		this.functions = new HashMap<String,Function<Request,byte[]>>();
 		if (get == null) {
 			this.functions.put("GET", defaultFunc);
 		}else {
@@ -33,7 +42,7 @@ public class Route {
 		}
 	}
 	
-	public Function<String[],byte[]> route(String [] path, int pathPlace, String request) {
+	public Function<Request,byte[]> route(String [] path, int pathPlace, String request) {
 		if (pathPlace == path.length) {
 			return this.functions.get(request);
 		}
