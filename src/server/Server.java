@@ -10,8 +10,13 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
+
 import org.postgresql.*;
 
+import Communications.HTTPResponse;
+import Communications.Request;
+import Communications.Response;
 import Supreme.SupremeDriving;
 import db.Driving;
 import protocols.HTTP;
@@ -74,6 +79,11 @@ public class Server implements Runnable {
 		try {
 			SupremeDriving supreme = new SupremeDriving(System.getenv("DATABASE_URL"), "postgres", "346578a@A");
 			this.db = supreme;
+			Function<Request,Response> defaultFunc =
+					(request) -> {
+						HTTPResponse response = new HTTPResponse(404);
+						return response;
+					};
 			Route retrieve = new Route(new HashMap<String,Route>(),
 					(request) -> {
 						byte [] bytes = new byte[1024];
@@ -88,7 +98,8 @@ public class Server implements Runnable {
 						}
 					},
 					null,
-					null
+					null,
+					defaultFunc
 			);
 			Route generate = new Route(new HashMap<String,Route>(), 
 					(request) -> {
@@ -101,14 +112,16 @@ public class Server implements Runnable {
 						}
 					}, 
 					null,
-					null 
+					null,
+					defaultFunc
 			);
 			Route authorize = new Route(new HashMap<String,Route>(),
 					(request) -> {
 						return ByteUtils.toByteArray(false, request.getByteNum());//ByteUtils.toByteArray(supreme.getAuthentication().validate(key, status, number_of_processors, user_profile, processor_identifier, os, computer_name, processor_architecture, java_home, username));
 					},
 					null,
-					null
+					null,
+					defaultFunc
 			);
 			HashMap<String,Route> routes = new HashMap<String,Route>();
 			routes.put("generate", generate);
@@ -117,7 +130,8 @@ public class Server implements Runnable {
 			Route base = new Route(routes,
 					null,
 					null,
-					null
+					null,
+					defaultFunc
 			);
 			this.setRoutes(base);
 		}

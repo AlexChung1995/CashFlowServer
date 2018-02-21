@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 import Communications.Request;
+import Communications.Response;
+import protocols.Protocol;
 import protocols.ProtocolParser;
 import utils.ByteUtils;
 import utils.StringUtils;
@@ -22,15 +24,15 @@ public class Connection implements Runnable {
 	private DataOutputStream out;
 	private DataInputStream in;
 	private Route routes;
-	private ProtocolParser parser;
+	private Protocol protocol;
 	private boolean keepAlive;
 	
-	public Connection(Socket clientSocket, Route routes, ProtocolParser parser) throws Exception {
+	public Connection(Socket clientSocket, Route routes, Protocol protocol) throws Exception {
 		this.clientSocket = clientSocket;
 		this.out = new DataOutputStream(clientSocket.getOutputStream());
 		this.in = new DataInputStream(clientSocket.getInputStream());
 		this.routes = routes;
-		this.parser = parser;
+		this.protocol = protocol;
 		this.keepAlive = false;
 	}
 	
@@ -38,28 +40,26 @@ public class Connection implements Runnable {
 	//parse body for route input
 	@Override
 	public void run() {
-		int read = 0;
-		while (read >= 0) {
+		//TODO: develop keepAlive logic
+		
+		//int read = 0;
+		//while (read >= 0) {
 			try {
-				Request request = this.parser.parse(in);
-				Function<Request,byte[]> operation = this.routes.route(request.getPath(),0,request.getMethodString());
-				byte [] response = operation.apply(request);
-				out.write(response);
+				Request request = this.protocol.parse(in);
+				Function<Request,Response> operation = this.routes.route(request.getPath(),0,request.getMethodString());
+				Response response = operation.apply(request);
+				this.protocol.sendResponse(request, response, out);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
-				break;
+				//break;
 			}
-		}
+		//}
 		System.out.println("closing connection");
 		try {
 			this.clientSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private void sendResponse(Request request, byte[] response){
-		
 	}
 }

@@ -1,7 +1,5 @@
 package Communications;
 
-import java.util.HashMap;
-
 import server.Route;
 import utils.StringUtils;
 

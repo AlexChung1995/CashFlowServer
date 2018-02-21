@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 import Communications.Request;
+import Communications.Response;
 import utils.ByteUtils;
 
 public class Route {
@@ -13,17 +14,12 @@ public class Route {
 	}
 	
 	private HashMap<String,Route> router;
-	private HashMap<String,Function<Request,byte[]>> functions; 
+	private HashMap<String,Function<Request,Response>> functions; 
 	
-	public Route(HashMap<String,Route> routes, Function<Request, byte[]> get, Function <Request, byte[]> put, Function <Request, byte[]> post){
+	public Route(HashMap<String,Route> routes, Function<Request, Response> get, Function <Request, Response> put, Function <Request, Response> post, Function<Request,Response> defaultFunc){
 		this.router = routes;
 		this.router.put("", this);//loopback
-		Function<Request, byte[]> defaultFunc = (request) -> {
-			byte[] bytes = ByteUtils.toByteArray("404 Not Found", request.getByteNum()); 
-			System.out.println(new String(bytes));
-			return bytes;
-		};
-		this.functions = new HashMap<String,Function<Request,byte[]>>();
+		this.functions = new HashMap<String,Function<Request,Response>>();
 		if (get == null) {
 			this.functions.put("GET", defaultFunc);
 		}else {
@@ -42,7 +38,7 @@ public class Route {
 		}
 	}
 	
-	public Function<Request,byte[]> route(String [] path, int pathPlace, String request) {
+	public Function<Request,Response> route(String [] path, int pathPlace, String request) {
 		if (pathPlace == path.length) {
 			return this.functions.get(request);
 		}

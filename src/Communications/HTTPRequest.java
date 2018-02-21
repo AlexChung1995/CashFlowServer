@@ -9,6 +9,7 @@ public class HTTPRequest extends Request {
 
 	private HashMap<String,String> body;
 	private HashMap<String,String> headers;
+	private String protocolVersion;
 	
 	public HTTPRequest() {
 		super();
@@ -17,7 +18,7 @@ public class HTTPRequest extends Request {
 	public HTTPRequest(byte[] request, String[] path, String method, int byteNum) {
 		super(request, path, method, byteNum);
 	}
-
+	
 	public HTTPRequest(byte[] request) {
 		super(request);
 		this.byteNum = 1;
@@ -44,6 +45,7 @@ public class HTTPRequest extends Request {
 		String [] command = StringUtils.split(metadata[0], " ");
 		this.method = command[0];
 		this.path = StringUtils.split(StringUtils.strip(command[1], "/"), "/");
+		this.protocolVersion= command[2];
 		HashMap<String,String> headers = parseValues(metadata[1],": ","\n");
 		return headers;
 	}
@@ -74,6 +76,10 @@ public class HTTPRequest extends Request {
 			String[] keyAndValue = StringUtils.split(headerArray[i], ": ");
 			this.headers.put(keyAndValue[0], keyAndValue[1]);
 		}
+	}
+	
+	public String getProtocolVersion() {
+		return this.protocolVersion;
 	}
 	
 }
