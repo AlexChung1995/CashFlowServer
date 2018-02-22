@@ -47,7 +47,7 @@ public class Server implements Runnable {
 			try {
 				System.out.println("accepting new connection");
 				Socket clientSocket = this.serverSocket.accept();
-				Connection connection = new Connection(clientSocket,this.base, new HTTP("HTTP"));
+				Connection connection = new Connection(clientSocket,this.base, new HTTP());
 				this.fixedThreadPool.execute(connection);
 			}
 			catch (Exception e) {

@@ -19,4 +19,5 @@ protocols\HTTP.class
 protocols\FTP.class
 server\Connection.class
 Communications\Request.class
+Communications\HTTPResponse.class
 server\Server.class
