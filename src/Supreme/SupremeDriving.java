@@ -15,6 +15,7 @@ public class SupremeDriving extends Driving {
 	
 	public SupremeDriving(String url, String user, String password) throws SQLException {
 		super(url, user, password);
+		authentication = new Authentication(this.getDB());
 	}
 	
 	protected void initTables() {

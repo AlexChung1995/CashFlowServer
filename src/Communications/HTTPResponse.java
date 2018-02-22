@@ -7,7 +7,7 @@ public class HTTPResponse extends Response {
 	private int status;
 	private static HashMap<Integer,String> statusMsgs;
 	private HashMap<String,String> headers;
-	private HashMap<String,String> body;
+	private String body;
 	
 	public HTTPResponse(int status) {
 		super();
@@ -16,10 +16,10 @@ public class HTTPResponse extends Response {
 		}
 		this.status = status;
 		this.headers = new HashMap<String,String>();
-		this.body = new HashMap<String,String>();
+		this.body = "";
 	}
 	
-	public HTTPResponse(int status, HashMap<String,String> headers, HashMap<String,String> body) {
+	public HTTPResponse(int status, HashMap<String,String> headers, String body) {
 		super();
 		if (statusMsgs == null) {
 			setStatusMsgs();
@@ -91,20 +91,12 @@ public class HTTPResponse extends Response {
 		this.headers.remove(key);
 	}
 	
-	public HashMap<String,String> getBody(){
+	public String getBody(){
 		return this.body;
 	}
 	
-	public void setBody(HashMap<String,String> body) {
+	public void setBody(String body) {
 		this.body = body;
-	}
-	
-	public void addBody(String key, String value) {
-		this.body.put(key,value);
-	}
-	
-	public void removeBody(String key) {
-		this.body.remove(key);
 	}
 	
 	public int getStatus() {

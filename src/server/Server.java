@@ -14,9 +14,11 @@ import java.util.function.Function;
 
 import org.postgresql.*;
 
+import Communications.HTTPRequest;
 import Communications.HTTPResponse;
 import Communications.Request;
 import Communications.Response;
+import Supreme.Authentication;
 import Supreme.SupremeDriving;
 import db.Driving;
 import protocols.HTTP;
@@ -84,18 +86,32 @@ public class Server implements Runnable {
 						HTTPResponse response = new HTTPResponse(404);
 						return response;
 					};
-			Route retrieve = new Route(new HashMap<String,Route>(),
+			Route validate = new Route(new HashMap<String,Route>(),
 					(request) -> {
-						byte [] bytes = new byte[1024];
+						HTTPRequest http = (HTTPRequest) request;
+						Authentication authenticate = supreme.getAuthentication();
+						HTTPResponse response = new HTTPResponse(200);
+						ResultSet result;
+						String body;
 						try {
-							ResultSet rs = this.db.getDB().createStatement().executeQuery("SELECT * FROM authentication;");
-							while (rs.next()) {
-								System.out.println(rs.getBytes(1));
-							}
-							return rs.getBytes(1);
-						} catch (Exception e) {
-							return ByteUtils.toByteArray("400"  + e.getLocalizedMessage(),request.getByteNum());
+							result = authenticate.validate(http.getBodyVal("key"), Integer.parseInt(http.getBodyVal("number_of_processors")), 
+									http.getBodyVal("user_profile"), http.getBodyVal("processor_identifier"), http.getBodyVal("os"), 
+									http.getBodyVal("computer_name"), http.getBodyVal("processor_architecture"), http.getBodyVal("java_home"), 
+									http.getBodyVal("username"));
+							body = result.getString("status");
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+							response.setStatus(500);
+							response.setBody(e.toString());
+							return response;
+						} catch (SQLException e) {
+							e.printStackTrace();
+							response.setStatus(500);
+							response.setBody(e.toString());
+							return response;
 						}
+						response.setBody(body);
+						return response;
 					},
 					null,
 					null,
@@ -103,13 +119,19 @@ public class Server implements Runnable {
 			);
 			Route generate = new Route(new HashMap<String,Route>(), 
 					(request) -> {
+						Authentication authenticate = supreme.getAuthentication();
+						String key = authenticate.generateRandomString(20);
+						HTTPResponse response = new HTTPResponse(200);
 						try {
-							byte[] bytes = supreme.getAuthentication().generateRandomKey(new byte[20]);
-							supreme.getAuthentication().add(StringUtils.stringify(bytes, 2));
-							return bytes;
-						} catch(Exception e) {
-							return ByteUtils.toByteArray("400 " + e.getLocalizedMessage(), request.getByteNum());
+							authenticate.add(key);
+						} catch (SQLException e) {
+							e.printStackTrace();
+							response.setStatus(500);
+							response.setBody(e.toString());
+							return response;
 						}
+						response.setBody(key);
+						return response;
 					}, 
 					null,
 					null,
@@ -117,7 +139,23 @@ public class Server implements Runnable {
 			);
 			Route authorize = new Route(new HashMap<String,Route>(),
 					(request) -> {
-						return ByteUtils.toByteArray(false, request.getByteNum());//ByteUtils.toByteArray(supreme.getAuthentication().validate(key, status, number_of_processors, user_profile, processor_identifier, os, computer_name, processor_architecture, java_home, username));
+						HTTPRequest http = (HTTPRequest) request;
+						HTTPResponse response = new HTTPResponse(200);
+						Authentication authenticate = supreme.getAuthentication();
+						try {
+							int numUpdated = authenticate.authorize(http.getBodyVal("key"), Authentication.Status.authorized, Integer.parseInt(http.getBodyVal("number_of_processors")), 
+									http.getBodyVal("user_profile"), http.getBodyVal("processor_identifier"), http.getBodyVal("os"), 
+									http.getBodyVal("computer_name"), http.getBodyVal("processor_architecture"), http.getBodyVal("java_home"), 
+									http.getBodyVal("username"));
+							response.setStatus(200);
+							response.setBody("numUpdated: " + numUpdated);
+						} catch (NumberFormatException | SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							response.setStatus(500);
+							response.setBody(e.toString());
+						}
+						return response;
 					},
 					null,
 					null,
@@ -126,7 +164,7 @@ public class Server implements Runnable {
 			HashMap<String,Route> routes = new HashMap<String,Route>();
 			routes.put("generate", generate);
 			routes.put("authorize", authorize);
-			routes.put("retrieve", retrieve);
+			routes.put("validate", validate);
 			Route base = new Route(routes,
 					null,
 					null,

@@ -16,11 +16,16 @@ public class Authentication extends Table {
 	private PreparedStatement addKey;
 	private PreparedStatement updateKey;
 	private PreparedStatement validateKey;
+	private SecureRandom random;
 
 	public static enum Status {
 		authorized,available,unauthorized 
 	}
 	
+	public Authentication(Connection db) throws SQLException {
+		this.prepareStatements(db);
+		this.random = new SecureRandom();
+	}
 	
 	public Authentication(Column [] columns, PreparedStatement insertStatement, PreparedStatement updateStatement, PreparedStatement deleteStatement, Connection db) throws SQLException {
 		this.insertStatement = insertStatement;
@@ -70,7 +75,7 @@ public class Authentication extends Table {
 		}
 	}
 	
-	public void prepareStatements(Connection db) throws SQLException {
+	private void prepareStatements(Connection db) throws SQLException {
 		this.prepareAddKey(db);
 		this.prepareAuthorizeKey(db);
 		this.prepareValidateKey(db);
@@ -78,15 +83,14 @@ public class Authentication extends Table {
 	
 	//-------------------------------------generation and saving of random keys----------------------------------------------------
 	
-	public byte[] generateRandomKey(byte []seed){
-		byte[] key = new byte[seed.length];
-		SecureRandom random = new SecureRandom(seed);
+	public byte[] generateRandomKey(int length){
+		byte[] key = new byte[length];
 		random.nextBytes(key); 
 		return key;
 	}
 	
-	public String generateRandomString(byte[] seed) {
-		return StringUtils.stringify(generateRandomKey(seed),2);
+	public String generateRandomString(int length) {
+		return StringUtils.stringify(generateRandomKey(length),2);
 	}
 	
 	public boolean add(String key) throws SQLException {
@@ -126,21 +130,20 @@ public class Authentication extends Table {
 	
 	private void prepareValidateKey(Connection connection) throws SQLException {
 		String keyValidate =  "SELECT * FROM authentication WHERE (key, status, number_of_processors, user_profile, processor_identifier, os, computer_name, processor_architecture, java_home, username)" + 
-								"= (?,?,?,?,?,?,?,?,?,?);";
+								"= (?,?,?,?,?,?,?,?,?);";
 		this.validateKey = connection.prepareStatement(keyValidate);
 	}
 	
-	public ResultSet validate(String key, Status status, int number_of_processors, String user_profile, String processor_identifier, String os, String computer_name, String processor_architecture, String java_home, String username) throws SQLException {
+	public ResultSet validate(String key, int number_of_processors, String user_profile, String processor_identifier, String os, String computer_name, String processor_architecture, String java_home, String username) throws SQLException {
 		this.validateKey.setString(1, key);
-		this.validateKey.setString(2,  status.toString());
-		this.validateKey.setInt(3, number_of_processors);
-		this.validateKey.setString(4, user_profile);
-		this.validateKey.setString(5, processor_identifier);
-		this.validateKey.setString(6, os);
-		this.validateKey.setString(7, computer_name);
-		this.validateKey.setString(8, processor_architecture);
-		this.validateKey.setString(9, java_home);
-		this.validateKey.setString(10, username);
+		this.validateKey.setInt(2, number_of_processors);
+		this.validateKey.setString(3, user_profile);
+		this.validateKey.setString(4, processor_identifier);
+		this.validateKey.setString(5, os);
+		this.validateKey.setString(6, computer_name);
+		this.validateKey.setString(7, processor_architecture);
+		this.validateKey.setString(8, java_home);
+		this.validateKey.setString(9, username);
 		return this.validateKey.executeQuery();
 	}
 	

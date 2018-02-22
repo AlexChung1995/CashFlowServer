@@ -12,7 +12,7 @@ public class Route {
 	public static enum REST{
 		GET,POST,PUT
 	}
-	
+
 	private HashMap<String,Route> router;
 	private HashMap<String,Function<Request,Response>> functions; 
 	

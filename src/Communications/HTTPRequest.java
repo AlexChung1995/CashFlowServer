@@ -68,14 +68,8 @@ public class HTTPRequest extends Request {
 		return map;
 	}
 	
-	public void setHeaders(byte[] headers) {
-		String headerString = StringUtils.stringify(headers, 1);
-		String[] headerArray = StringUtils.split(headerString, "\n");
-		int i = 0;
-		for (i = 0; i<headerArray.length; i++) {
-			String[] keyAndValue = StringUtils.split(headerArray[i], ": ");
-			this.headers.put(keyAndValue[0], keyAndValue[1]);
-		}
+	public String getBodyVal(String key) {
+		return this.body.get(key);
 	}
 	
 	public String getProtocolVersion() {

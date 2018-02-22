@@ -45,9 +45,7 @@ public class HTTP extends Protocol{
 			responseString += entry.getKey() +": " + entry.getValue() + "\r\n";
 		}
 		responseString += "\r\n\r\n";
-		for (Entry<String,String> entry: response.getBody().entrySet()) {
-			responseString += entry.getKey() +": " + entry.getValue() + "\r\n";
-		}
+		responseString += response.getBody();
 		stream.write(ByteUtils.toByteArray(responseString, request.getByteNum()));
 		return null;
 	}
