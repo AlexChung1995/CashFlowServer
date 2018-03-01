@@ -1,1 +1,2 @@
-web: java -classpath C:\Users\Anonymous\Projects\Java\SupremeCashV2AuthServer\target\*;C:\Users\Anonymous\Projects\Java\Services\postgres\* server.Server
+localDev: java -classpath C:\Users\Anonymous\Projects\Java\SupremeCashV2AuthServer\target\*;C:\Users\Anonymous\Projects\Java\Services\postgres\* server.Server
+web: java -classpath .\target\*; server.Server
