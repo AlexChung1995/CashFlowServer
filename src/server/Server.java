@@ -82,7 +82,7 @@ public class Server implements Runnable {
 	public void initServer() {
 		System.out.println("Running initServer()");
 		try {
-			SupremeDriving supreme = new SupremeDriving(System.getenv("JDBC_DATABASE_URL"), System.getenv("JDBC_DATABASE_USER"), System.getenv("JDBC_DATABASE_PASSWORD"));
+			SupremeDriving supreme = new SupremeDriving(System.getenv("JDBC_DATABASE_URL"), System.getenv("JDBC_DATABASE_USERNAME"), System.getenv("JDBC_DATABASE_PASSWORD"));
 			this.db = supreme;
 			Function<Request,Response> defaultFunc =
 					(request) -> {
