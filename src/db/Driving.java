@@ -18,10 +18,9 @@ public class Driving {
 	
 	public Connection connect(String url, String user, String password) throws SQLException{
 		Properties props = new Properties();
-		String jdbcUrl = "jdbc:"+url;
 		props.setProperty("user",user);
 		props.setProperty("password", password);
-		this.db = DriverManager.getConnection(jdbcUrl,props);
+		this.db = DriverManager.getConnection(url,props);
 		return db;
 	}
 	
