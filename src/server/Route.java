@@ -2,6 +2,7 @@ package server;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 import Communications.Request;
@@ -46,6 +47,15 @@ public class Route {
 				return this.defaultFunc;
 			}
 		}
+	}
+	
+	public String toString() {
+		String routeAsString = "route: {\r\n";
+		for (Entry<String, Function<Request,Response>> route: functions.entrySet()) {
+			routeAsString += "\r" + route.getKey() + ": " + route.getValue().toString() + "\r\n";
+		}
+		routeAsString += "}";
+		return routeAsString;
 	}
 	
 }

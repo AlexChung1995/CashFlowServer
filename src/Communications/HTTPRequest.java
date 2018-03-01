@@ -79,11 +79,11 @@ public class HTTPRequest extends Request {
 	
 	public String toString() {
 		String requestAsString = "{\r\nmethod: " + this.method;
-		requestAsString += "\r\n path: " + Arrays.toString(this.path) + "\r\nheaders: ";
+		requestAsString += "\r\npath: " + Arrays.toString(this.path) + "\r\nheaders: {";
 		for (Entry<String,String> header: this.headers.entrySet()) {
-			requestAsString += "\r\n" + header.getKey() +": " + header.getValue();
+			requestAsString += "\r\n\r" + header.getKey() +": " + header.getValue();
 		}
-		requestAsString += "\r\nbody: " + this.body + "\r\n}";
+		requestAsString += "}\r\nbody: " + this.body + "\r\n}";
 		return requestAsString;
 		
 	}

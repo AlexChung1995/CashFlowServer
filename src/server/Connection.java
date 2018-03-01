@@ -43,6 +43,7 @@ public class Connection implements Runnable {
 		//TODO: develop keepAlive logic
 		try {
 			Request request = this.protocol.parse(in);
+			System.out.println("this.routes: " + this.routes.toString());
 			Function<Request,Response> operation = this.routes.route(request.getPath(),0,request.getMethodString());
 			Response response = operation.apply(request);
 			this.protocol.sendResponse(request, response, out);
