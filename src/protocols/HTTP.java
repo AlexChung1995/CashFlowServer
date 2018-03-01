@@ -12,6 +12,7 @@ import Communications.HTTPResponse;
 import Communications.Request;
 import Communications.Response;
 import utils.ByteUtils;
+import utils.StringUtils;
 
 //For HTTP connections
 public class HTTP extends Protocol{
@@ -27,10 +28,13 @@ public class HTTP extends Protocol{
 
 	@Override
 	public HTTPRequest parse(InputStream stream) { 
-		int read = 0;
 		byte[] request = new byte[1024];
 		try {
-			read = stream.read(request);
+			int bytesRead = stream.read(request,0,1024);
+			while (stream.available() > 0) {
+				System.out.println("stream.read() bytesRead: " + bytesRead + " " + StringUtils.stringify(request,1));
+				bytesRead += stream.read(request,bytesRead,1024 - bytesRead);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

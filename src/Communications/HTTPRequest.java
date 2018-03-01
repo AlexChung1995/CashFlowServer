@@ -24,7 +24,7 @@ public class HTTPRequest extends Request {
 		this.byteNum = 1;
 		this.headers = new HashMap<String,String>();
 		this.body = new HashMap<String,String>();
-		System.out.println(StringUtils.stringify(request,this.byteNum));
+		System.out.println("Stringified request: " + StringUtils.stringify(request,this.byteNum));
 		String[] message = StringUtils.split(StringUtils.stringify(request, this.byteNum), "\r\n\r\n");
 		String header = message[0];
 		String body = "";
