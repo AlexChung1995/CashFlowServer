@@ -2,6 +2,7 @@ package Communications;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import utils.StringUtils;
 
@@ -33,11 +34,13 @@ public class HTTPRequest extends Request {
 		}
 		this.headers = parseHeaders(header);
 		this.body = parseBody(body);
+		System.out.println(this.toString());
 	}
 	
 	public HashMap<String,String> parseHeaders(String headerString){
 		String [] metadata = StringUtils.split(headerString, "\r\n", 1);
 		String [] command = StringUtils.split(metadata[0], " ");
+		System.out.println("command: " + Arrays.toString(command));
 		this.method = command[0];
 		try {
 			this.path = StringUtils.split(StringUtils.strip(command[1], "/"), "/");
@@ -72,6 +75,17 @@ public class HTTPRequest extends Request {
 	
 	public String getProtocolVersion() {
 		return this.protocolVersion;
+	}
+	
+	public String toString() {
+		String requestAsString = "{\r\nmethod: " + this.method;
+		requestAsString += "\r\n path: " + Arrays.toString(this.path) + "\r\nheaders: ";
+		for (Entry<String,String> header: this.headers.entrySet()) {
+			requestAsString += "\r\n" + header.getKey() +": " + header.getValue();
+		}
+		requestAsString += "\r\nbody: " + this.body + "\r\n}";
+		return requestAsString;
+		
 	}
 	
 }
