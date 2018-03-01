@@ -99,7 +99,7 @@ public class Authentication extends Table {
 	}
 	
 	private void prepareAddKey(Connection connection) throws SQLException {
-		String keyAdd = "INSERT INTO authentication() VALUES (?);";
+		String keyAdd = "INSERT INTO authentication VALUES (?);";
 		this.addKey = connection.prepareStatement(keyAdd);
 	}
 	

@@ -1,5 +1,6 @@
 package server;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
 
@@ -15,35 +16,35 @@ public class Route {
 
 	private HashMap<String,Route> router;
 	private HashMap<String,Function<Request,Response>> functions; 
+	private Function<Request, Response> defaultFunc;
 	
-	public Route(HashMap<String,Route> routes, Function<Request, Response> get, Function <Request, Response> put, Function <Request, Response> post, Function<Request,Response> defaultFunc){
+	public Route(HashMap<String,Route> routes, Function<Request, Response> get, Function <Request, Response> put, 
+			Function <Request, Response> post, Function<Request,Response> defaultFunc){
 		this.router = routes;
+		this.defaultFunc = defaultFunc;
 		this.router.put("", this);//loopback
 		this.functions = new HashMap<String,Function<Request,Response>>();
-		if (get == null) {
-			this.functions.put("GET", defaultFunc);
-		}else {
-			this.functions.put("GET", get);
-		}
-		if(put == null) {
-			this.functions.put("PUT", defaultFunc);
-		}else {
-			this.functions.put("PUT", put);
-		}
-		if(post == null) {
-			this.functions.put("POST", defaultFunc);
-		}
-		else {
-			this.functions.put("POST", post);
-		}
+		this.functions.put("GET", get);
+		this.functions.put("PUT", put);
+		this.functions.put("POST", post);
 	}
 	
 	public Function<Request,Response> route(String [] path, int pathPlace, String request) {
+		System.out.println("path: " + Arrays.toString(path) + " pathPlace: " + pathPlace + " path.length: " + path.length + " " + request + ";");	
 		if (pathPlace == path.length) {
-			return this.functions.get(request);
-		}
-		else {
-			return this.router.get(path[pathPlace]).route(path, pathPlace + 1, request);
+			Function<Request,Response> func = this.functions.get(request);
+			if (func == null) {
+				System.out.println("no route, sending defaultFunc");
+				func = this.defaultFunc;
+			}
+			return func;
+		}else {
+			try {
+				return this.router.get(path[pathPlace]).route(path, pathPlace + 1, request);
+			} catch(NullPointerException e) {
+				System.out.println("No such route: " + Arrays.toString(path));
+				return this.defaultFunc;
+			}
 		}
 	}
 	

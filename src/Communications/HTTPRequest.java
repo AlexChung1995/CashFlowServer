@@ -24,27 +24,26 @@ public class HTTPRequest extends Request {
 		this.byteNum = 1;
 		this.headers = new HashMap<String,String>();
 		this.body = new HashMap<String,String>();
+		System.out.println(StringUtils.stringify(request,this.byteNum));
 		String[] message = StringUtils.split(StringUtils.stringify(request, this.byteNum), "\r\n\r\n");
 		String header = message[0];
-		System.out.println("header: " + header);
 		String body = "";
 		if (message.length == 2) {
 			body = message[1];
-			System.out.println("body: " + body);
 		}
 		this.headers = parseHeaders(header);
 		this.body = parseBody(body);
-		System.out.println(this.method);
-		System.out.println(Arrays.toString(this.path));
-		System.out.println(this.headers.toString());
-		System.out.println(this.body.toString());
 	}
 	
 	public HashMap<String,String> parseHeaders(String headerString){
-		String [] metadata = StringUtils.split(headerString, "\n", 1);
+		String [] metadata = StringUtils.split(headerString, "\r\n", 1);
 		String [] command = StringUtils.split(metadata[0], " ");
 		this.method = command[0];
-		this.path = StringUtils.split(StringUtils.strip(command[1], "/"), "/");
+		try {
+			this.path = StringUtils.split(StringUtils.strip(command[1], "/"), "/");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.protocolVersion= command[2];
 		HashMap<String,String> headers = parseValues(metadata[1],": ","\n");
 		return headers;
@@ -61,7 +60,6 @@ public class HTTPRequest extends Request {
 		for (int i = 0; i<entries.length; i++) {
 			String [] entry = StringUtils.split(entries[i], keyValSeperator);
 			if (entry.length == 2) {
-				System.out.println("entry key: " + entry[0] + "; entry value: " + entry[1]);
 				map.put(entry[0], entry[1]);
 			}
 		}

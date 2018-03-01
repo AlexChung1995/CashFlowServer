@@ -150,7 +150,6 @@ public class Server implements Runnable {
 							response.setStatus(200);
 							response.setBody("numUpdated: " + numUpdated);
 						} catch (NumberFormatException | SQLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 							response.setStatus(500);
 							response.setBody(e.toString());

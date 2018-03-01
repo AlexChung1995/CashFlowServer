@@ -3,6 +3,7 @@ package protocols;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
@@ -30,9 +31,9 @@ public class HTTP extends Protocol{
 		byte[] request = new byte[1024];
 		try {
 			read = stream.read(request);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 		HTTPRequest requestObj = new HTTPRequest(request);
 		return requestObj;
@@ -47,6 +48,7 @@ public class HTTP extends Protocol{
 		responseString += "\r\n\r\n";
 		responseString += response.getBody();
 		stream.write(ByteUtils.toByteArray(responseString, request.getByteNum()));
+		System.out.println("sendResponse: " + response.getBody() + " " + response.getStatus());
 		return null;
 	}
 

@@ -41,20 +41,15 @@ public class Connection implements Runnable {
 	@Override
 	public void run() {
 		//TODO: develop keepAlive logic
-		
-		//int read = 0;
-		//while (read >= 0) {
-			try {
-				Request request = this.protocol.parse(in);
-				Function<Request,Response> operation = this.routes.route(request.getPath(),0,request.getMethodString());
-				Response response = operation.apply(request);
-				this.protocol.sendResponse(request, response, out);
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-				//break;
-			}
-		//}
+		try {
+			Request request = this.protocol.parse(in);
+			Function<Request,Response> operation = this.routes.route(request.getPath(),0,request.getMethodString());
+			Response response = operation.apply(request);
+			this.protocol.sendResponse(request, response, out);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		System.out.println("closing connection");
 		try {
 			this.clientSocket.close();

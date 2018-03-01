@@ -83,6 +83,7 @@ public class StringUtils {
 			int j = 1;
 			while (j < byteNum) {
 				i++;
+				j++;
 				a = (char) (a << 8);
 				a = (char) (a | bytes[i]);
 			}
