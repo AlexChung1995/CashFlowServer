@@ -35,6 +35,7 @@ public class HTTP extends Protocol{
 			e.printStackTrace();
 			return null;
 		}
+		System.out.println("request read: " + request);
 		HTTPRequest requestObj = new HTTPRequest(request);
 		return requestObj;
 	}

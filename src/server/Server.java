@@ -37,6 +37,7 @@ public class Server implements Runnable {
 	
 	public Server(int portNumber, int threadNumber) throws Exception{
 		this.port = portNumber;
+		System.out.println("portNumber: " + portNumber);
 		this.fixedThreadPool = Executors.newFixedThreadPool(threadNumber);
 		this.serverSocket = new ServerSocket(port);
 		this.sizeData = Byte.SIZE;//default encoding 
