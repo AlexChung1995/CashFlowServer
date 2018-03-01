@@ -1,43 +1,15 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>SupremeCashV2AuthServer</groupId>
   <artifactId>SupremeCashV2AuthServer</artifactId>
-  <version>0.1</version>
   <name>SupremeCashV2AuthServer</name>
+  <version>0.1</version>
   <description>Authorization Server for SupremeCashV2</description>
   <url>https://github.com/AlexChung1995</url>
   <scm>
     <developerConnection>Alex Chung</developerConnection>
   </scm>
-  <properties>
-  	<env.PORT>5000</env.PORT>
-  	<env.THREAD_NUMBER>10</env.THREAD_NUMBER>
-  </properties>
-  <repositories>
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <name>Central Repository</name>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <name>Central Repository</name>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </pluginRepository>
-  </pluginRepositories>
   <build>
     <sourceDirectory>C:\Users\Anonymous\Projects\Java\SupremeCashV2AuthServer\src</sourceDirectory>
     <scriptSourceDirectory>C:\Users\Anonymous\Projects\Java\SupremeCashV2AuthServer\src\main\scripts</scriptSourceDirectory>
@@ -161,7 +133,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.1.0</version>
         <executions>
@@ -170,8 +141,7 @@
             <goals>
               <goal>shade</goal>
             </goals>
-            <configuration>
-            </configuration>
+            <configuration />
           </execution>
         </executions>
       </plugin>
@@ -263,19 +233,35 @@
       </plugin>
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </pluginRepository>
+  </pluginRepositories>
   <reporting>
     <outputDirectory>C:\Users\Anonymous\Projects\Java\SupremeCashV2AuthServer\target\site</outputDirectory>
   </reporting>
-  <dependencies>
-  	<dependency>
-  		<groupId>org.postgresql</groupId>
-  		<artifactId>postgresql</artifactId>
-  		<version>42.2.1</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.apache.httpcomponents</groupId>
-  		<artifactId>httpclient</artifactId>
-  		<version>4.5.5</version>
-  	</dependency>
-  </dependencies>
+  <properties>
+    <env.THREAD_NUMBER>10</env.THREAD_NUMBER>
+    <env.PORT>5000</env.PORT>
+  </properties>
 </project>
+
