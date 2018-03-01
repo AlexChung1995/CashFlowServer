@@ -48,6 +48,7 @@ public class Server implements Runnable {
 			try {
 				System.out.println("accepting new connection");
 				Socket clientSocket = this.serverSocket.accept();
+				System.out.println("this.base: " + this.base.toString());
 				Connection connection = new Connection(clientSocket,this.base, new HTTP());
 				this.fixedThreadPool.execute(connection);
 			}
@@ -79,6 +80,7 @@ public class Server implements Runnable {
 	}
 	
 	public void initServer() {
+		System.out.println("Running initServer()");
 		try {
 			SupremeDriving supreme = new SupremeDriving(System.getenv("DATABASE_URL"), "postgres", "346578a@A");
 			this.db = supreme;
@@ -171,7 +173,7 @@ public class Server implements Runnable {
 					null,
 					defaultFunc
 			);
-			this.setRoutes(base);
+			this.base = base;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
