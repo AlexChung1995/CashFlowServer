@@ -52,7 +52,7 @@ public class Route {
 	public String toString() {
 		String routeAsString = "route: {\r\n";
 		for (Entry<String, Function<Request,Response>> route: functions.entrySet()) {
-			routeAsString += "\r" + route.getKey() + ": " + route.getValue() + "\r\n";
+			routeAsString += route.getKey() + ": " + route.getValue() + "\r\n";
 		}
 		routeAsString += "}";
 		return routeAsString;
