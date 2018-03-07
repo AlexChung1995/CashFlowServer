@@ -81,7 +81,7 @@ public class HTTPRequest extends Request {
 		String requestAsString = "{\r\nmethod: " + this.method;
 		requestAsString += "\r\npath: " + Arrays.toString(this.path) + "\r\nheaders: {";
 		for (Entry<String,String> header: this.headers.entrySet()) {
-			requestAsString += "\r\n                   " + header.getKey() +": " + header.getValue();
+			requestAsString += "\r\n\r" + header.getKey() +": " + header.getValue();
 		}
 		requestAsString += "}\r\nbody: " + this.body + "\r\n}";
 		return requestAsString;
