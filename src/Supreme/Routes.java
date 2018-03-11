@@ -1,89 +1,36 @@
-package server;
+package Supreme;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.sql.*;
+import server.Server;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
-
-import org.postgresql.*;
 
 import Communications.HTTPRequest;
 import Communications.HTTPResponse;
 import Communications.Request;
 import Communications.Response;
-import Supreme.Authentication;
-import Supreme.SupremeDriving;
-import db.Driving;
-import protocols.HTTP;
 import server.Route;
-import utils.ByteUtils;
-import utils.StringUtils;
-//server class for listening and handling requests
-public class Server implements Runnable {
 
-	private ExecutorService fixedThreadPool;
-	private int port;
-	private ServerSocket serverSocket;
-	private Route base;
-	private Driving db;
-	private int sizeData;
-	
-	public Server(int portNumber, int threadNumber) throws Exception{
-		this.port = portNumber;
-		System.out.println("portNumber: " + portNumber);
-		this.fixedThreadPool = Executors.newFixedThreadPool(threadNumber);
-		this.serverSocket = new ServerSocket(port);
-		this.sizeData = Byte.SIZE;//default encoding 
-	}
-	
-	public void run() {
-		while (true) {
-			try {
-				System.out.println("accepting new connection");
-				Socket clientSocket = this.serverSocket.accept();
-				System.out.println("this.base: " + this.base.toString());
-				Connection connection = new Connection(clientSocket,this.base, new HTTP());
-				this.fixedThreadPool.execute(connection);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				break;
-			}
-		}
+public class Routes {
+
+	public static void main(String[] args) {
+		Server server;
 		try {
-			this.serverSocket.close();
-		}
-		catch (Exception e) {
+			server = new Server(Integer.parseInt(System.getenv("PORT")),Integer.parseInt(System.getenv("THREAD_NUMBER")));
+			server.setRoutes(createRoutes());
+			server.run();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void setSize(int size) {
-		this.sizeData = size;
-	}
-	
-	public void setRoutes(Route base) {
-		this.base = base;
-	}
-	
-	public Driving initDB(String url, String user, String password) throws SQLException, ClassNotFoundException {
-		Driving driver = new Driving(url,user,password);
-		this.db = driver;
-		return driver;
-	}
-	
-	public void initServer() {
+	public static Route createRoutes() {
 		System.out.println("Running initServer()");
 		try {
 			SupremeDriving supreme = new SupremeDriving(System.getenv("JDBC_DATABASE_URL"), System.getenv("JDBC_DATABASE_USERNAME"), System.getenv("JDBC_DATABASE_PASSWORD"));
-			this.db = supreme;
 			Function<Request,Response> defaultFunc =
 					(request) -> {
 						HTTPResponse response = new HTTPResponse(404);
@@ -173,25 +120,12 @@ public class Server implements Runnable {
 					null,
 					defaultFunc
 			);
-			this.base = base;
+			return base;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 	
-	public Driving getDB() {
-		return this.db;
-	}
-	
-	public static void main(String[] args) {
-		try {
-			Server server = new Server(Integer.parseInt(System.getenv("PORT")),Integer.parseInt(System.getenv("THREAD_NUMBER")));
-			server.initServer();
-			server.run();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 }
